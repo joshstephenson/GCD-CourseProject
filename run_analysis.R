@@ -38,17 +38,30 @@ getMeanAndStandardDevData <- function(dataDir,
         Data.X <- Data.X[features[[1]]]
         names(Data.X) <- features[[2]]
         
-        ## Add the activity type from the y_test or y_train file
-        Path.Y <- paste(dataDir, "/", subfolder, "/", y_filename, sep = "")
-        Data.Y <- read.table(Path.Y, header = F)
-        Data.X["ActivityType"] = Data.Y[[1]]
-        
+        # Add the subject to the data table as a new column `Subject`
         Path.subject <- paste(dataDir, "/", subfolder, "/", subject_filename, sep = "")
         Data.subject <- read.table(Path.subject, header = F)
         Data.X["Subject"] = Data.subject[[1]]
         Data.X
+
+        ## Add the activity type from the y_test or y_train file as a new column `ActivityType`
+        # Making sure to replace the numeric value with the string value from the `activity_labels.txt` file
+        activities <- getActivityNames()
+        Path.Y <- paste(dataDir, "/", subfolder, "/", y_filename, sep = "")
+        Data.Y <- read.table(Path.Y, header = F)
+        names(Data.Y) <- c("ID")
+        
+        Data.merged <- merge(Data.Y, activities, by="ID",all=TRUE)
+        Data.merged
+        Data.X["ActivityName"] = Data.merged["Name"]
+        # Data.X["ActivityID"] = Data.merged["ID"]
+        write.table(Data.X, file= "output.txt", row.names = FALSE)        
+        Data.X
 }
 
+# For each type of either `time` or `frequency` open the features.txt file
+# and find all feature names that match the type that also only match mean or
+# standard deviation features
 getFeatureNames <- function(type = "time", uciHarDataset = "UCI HAR Dataset") {
         filename <- paste(uciHarDataset, "/", "features.txt", sep="")
         if (!file.exists(filename)) {
@@ -97,6 +110,19 @@ getFeatureNames <- function(type = "time", uciHarDataset = "UCI HAR Dataset") {
         selected
 }
 
+# Read the activity labels and their corresponding value from activity_labels file
+getActivityNames <- function(uciHarDataset = "UCI HAR Dataset") {
+        filename <- paste(uciHarDataset, "/", "activity_labels.txt", sep="")
+        if (!file.exists(filename)) {
+                stop(paste("Cannot find activity_labels.txt (", filename, ")", sep=""))
+        }
+        activities <- read.table(filename)
+        activities[[2]] <- tolower(activities[[2]])
+        activities[[2]] <- gsub("_", " ", activities[[2]])
+        names(activities) <- c("ID", "Name")
+        activities
+}
+
 downloadData()
-features <- getFeatureNames()
+getActivityNames()
 getMeanAndStandardDevData("UCI HAR Dataset", type="time", isTest=TRUE)
