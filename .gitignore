@@ -30,3 +30,8 @@ UCI HAR Dataset/train/y_train.txt
 data.zip
 .DS_Store
 UCI HAR Dataset.names
+UCI HAR Combined.txt
+.Rhistory
+.RData
+README.html
+README.rmd
