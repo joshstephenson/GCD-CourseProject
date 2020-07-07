@@ -118,7 +118,6 @@ averageDataSetsByActivityAndSubject <- function(dataFrame) {
         subjects <- sort(subjects$Subject)
         activities <- unique(dataFrame["ActivityName"])
         features <- getCleanedFeatureNames()[[2]]
-
         
         for(id in subjects) {
                 for(name in activities) {
@@ -126,10 +125,11 @@ averageDataSetsByActivityAndSubject <- function(dataFrame) {
                         new <- data.frame(Subject = id, ActivityName = name)
                         for (feature in features) {
                                 count <- length(filtered[,feature])
+                                newColumn <- paste("Mean: ", feature, sep = "")
                                 if (count > 0) {
-                                        new[feature] = mean(filtered[,feature])
+                                        new[newColumn] = mean(filtered[,feature])
                                 }else{
-                                        new[feature] = 0.0
+                                        new[newColumn] = 0.0
                                 }
                         }
                         newDataFrame <- rbind(newDataFrame, new)
