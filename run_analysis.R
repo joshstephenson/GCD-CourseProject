@@ -147,7 +147,7 @@ mergeDataSets <- function() {
 }
 
 # writes provided data frame to file with `write.table`
-exportMeanDataBySubjectAndActivity <- function(dataFrame, filename = "UCI-HAR-MeanBySubjectAndActivity.txt") {
+exportMeanDataBySubjectAndActivity <- function(dataFrame, filename = "UCI-HAR-tidy-data.txt") {
         write.table(dataFrame, file = filename, row.names = FALSE)        
 }
 
