@@ -92,9 +92,9 @@ getCleanedFeatureNames <- function(uciHarDataset = "UCI HAR Dataset") {
         selected[[2]] <- gsub("BodyBody", "Body", selected[[2]])
         
         # Put a hyphen before the last X,Y or Z
-        selected[[2]] <- gsub("X$", "-X", selected[[2]])
-        selected[[2]] <- gsub("Y$", "-Y", selected[[2]])
-        selected[[2]] <- gsub("Z$", "-Z", selected[[2]])
+        selected[[2]] <- gsub("X$", ".X", selected[[2]])
+        selected[[2]] <- gsub("Y$", ".Y", selected[[2]])
+        selected[[2]] <- gsub("Z$", ".Z", selected[[2]])
         
         selected
 }
@@ -125,7 +125,7 @@ averageDataSetsByActivityAndSubject <- function(dataFrame) {
                         new <- data.frame(Subject = id, ActivityName = name)
                         for (feature in features) {
                                 count <- length(filtered[,feature])
-                                newColumn <- paste("Mean: ", feature, sep = "")
+                                newColumn <- paste("Mean.", feature, sep = "")
                                 if (count > 0) {
                                         new[newColumn] = mean(filtered[,feature])
                                 }else{
@@ -147,7 +147,7 @@ mergeDataSets <- function() {
 }
 
 # writes provided data frame to file with `write.table`
-exportDataSets <- function(dataFrame, filename = "UCI HAR Combined.txt") {
+exportMeanDataBySubjectAndActivity <- function(dataFrame, filename = "UCI-HAR-MeanBySubjectAndActivity.txt") {
         write.table(dataFrame, file = filename, row.names = FALSE)        
 }
 
@@ -161,4 +161,5 @@ dataFrame <- mergeDataSets()
 # exportDataSets(dataFrame)
 
 # Step 4 (Step 5 from instructions)
-averageDataSetsByActivityAndSubject(dataFrame)
+averaged <- averageDataSetsByActivityAndSubject(dataFrame)
+exportMeanDataBySubjectAndActivity(averaged)
