@@ -6,7 +6,33 @@ output: html_document
 ---
 
 ## Overview of operations for `run_analysis.R`
-The script `run_analysis.R` retrieves accelerometer and gyroscope values measured across a range of 30 subjects in 6 different activities. The data is stored on the web in a zip file and is organized into sub-folders based on whether it is test or train data. This data is retrieved, unzipped and then cleaned and process. This document outlines the specifics of that process.
+We were asked to write a script to do the following:
+1. Merge the training and the test sets to create one data set.
+2. Extract only the measurements on the mean and standard deviation for each measurement.
+3. Use descriptive activity names to name the activities in the data set
+4. Appropriately label the data set with descriptive variable names.
+5. From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
+
+- Steps 1-4 are performed by the function `cleanAndMergeDataSets()` which calls on other helper functions outlined below.
+- Step 5 is performed by the function `averageDataSetsByActivityAndSubject()` and written to file `UCI-HAR-tidy-data.txt`
+If you would like to read this data file back into R, the following snippet will help:
+```
+> averaged <- read.table("UCI-HAR-tidy-data.txt", header = T)
+> ncol(averaged)
+[1] 68
+> nrow(averaged)
+[1] 180
+> head(names(averaged))
+[1] "Subject"                                          
+[2] "ActivityName"                                     
+[3] "MeanOfFrequencyMeanBodyAccelerometerJerkMagnitude"
+[4] "MeanOfFrequencyMeanBodyAccelerometerJerkX"        
+[5] "MeanOfFrequencyMeanBodyAccelerometerJerkY"        
+[6] "MeanOfFrequencyMeanBodyAccelerometerJerkZ" 
+```
+
+## More general overview
+The script `run_analysis.R` retrieves accelerometer and gyroscope values measured across a range of 30 subjects in 6 different activities. The data is stored on the web in a zip file and is organized into sub-folders for test and train data. This data is retrieved, unzipped and then cleaned and process. This document outlines the specifics of that process.
 
 Data is made available by the Machine Learning Repository of the University of California, Irvine. Read more: [Human Activity Recognition Using Smartphones Data Set](http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones)
 
@@ -14,7 +40,7 @@ Dataset attribution:
 - Davide Anguita, Alessandro Ghio, Luca Oneto, Xavier Parra and Jorge L. Reyes-Ortiz. A Public Domain Dataset for Human Activity Recognition Using Smartphones. 21th European Symposium on Artificial Neural Networks, Computational Intelligence and Machine Learning, ESANN 2013. Bruges, Belgium 24-26 April 2013.
 
 
-### Download and unzip data
+### Step 0. Download and unzip data
 
 The first thing the script does is look for the existence of data.zip. If it's not found, it will be downloaded from
 `https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip` and unzipped in the current 
@@ -22,7 +48,10 @@ working directory.
 
 The internal function that does this is called `downloadDataAndUnzip()` which requires no arguments.
 
-### Read and clean feature names from `features.txt`
+## Steps 1-4
+Steps 1-4 are broken down into various steps outlined here:
+
+#### Read and clean feature names from `features.txt`
 
 The `run_analysis.R` script reads the feature names from the `features.txt` file. (They are not hard-coded in the 
 script.) Only features that match the regular expression `(mean|std)` are parsed along with their respective numeric keys
@@ -41,11 +70,11 @@ For example:
 The internal function that performs this is called `getCleanedFeatureNames()` and takes one optional argument:
 - `uciHarDataset` a character vector that is set to "UCI HAR Dataset" by default (which is the top-level directory in the zip file downloaded above).
 
-### Load in `test` and `train` data
-• The activity data is read from `X_test.txt` and `X_train.txt` and then merged together in one data.frame. Only the columns that match the 
+#### Load in `test` and `train` data
+- The activity data is read from `X_test.txt` and `X_train.txt` and then merged together in one data.frame. Only the columns that match the 
 features parse by `getCleanedFeatureNames()` are saved and passed along. Note: this only includes features for mean and standard deviation.
-• The subject values in their original numeric form are appended to the data frame with a column name of `Subject`.
-• The activity type is read from `y_test.txt` and `y_train.txt` and is cross-referenced with the string value in 
+- The subject values in their original numeric form are appended to the data frame with a column name of `Subject`.
+- The activity type is read from `y_test.txt` and `y_train.txt` and is cross-referenced with the string value in 
 `activity_labels.txt` and stored in the data frame with a column name of `ActivityType`. It is stored as a lower case value with the underscore removed for better readability.
 
 The internal function that performs this is called `cleanAndMergeDataSets()` which takes no arguments. It relies heavily on `getMeanAndStandardDevData()` which takes two optional arguments:
@@ -53,35 +82,20 @@ The internal function that performs this is called `cleanAndMergeDataSets()` whi
 - `isTest` a boolean value set to false by default. Setting this to true will obtain the data inside the "train" sub-directory.
 It is called once with `isTest` set to FALSE (default behavior) and once again with `isTest` set to TRUE and then combined using `rbind()`
 
-### New Data Frame for Averages by Subject and Activity
+## Step 5. Create a new data frame for averages by subject by activity and export to file
 Lastly, the script creates a new data frame with 1 row for each subject for each activity type. There are 30 subjects
 and 6 activity types.
 - The first column is the `Subject` (a numeric integer value between 1 and 30).
 - The second column is `ActivityName` (a character vector) 
 - These are followed by all the features matched above (79 columns for mean and standard deviation) where the mean of all those values (for each 
 subject and activity) has been calculated. These column names are prefixed with `MeanOf`. (e.g. `MeanOfTimeBodyAccelerationMeanX` and `MeanOfTimeBodyAccelerationStandardDeviationX`). I realize in the case of variables that are already means themselves, this might
-appear redundant, and well: it is. However it's what was requested and so I figure it may as well be labeled properly.
+appear redundant, and well: it is. However it's what was requested and so I figure they may as well be labeled properly.
 - This yields a data frame of 68 columns and 180 rows.
-- It then writes the data to a file name
+- It then writes the data to a file name named `UCI-HAR-tide-data.txt` which can be found in the repository where this script is located.
 
 The internal function that performs this `averageDataSetsByActivityAndSubject()` and requires a data Frame argument. The dataFrame returned from 
 `cleanAndMergeDataSets()` is passed in this case.
 
-If you would like to read this data file back into R, the following snippet will help:
-```
-> averaged <- read.table("UCI-HAR-tidy-data.txt", header = T)
-> ncol(averaged)
-[1] 68
-> nrow(averaged)
-[1] 180
-> head(names(averaged))
-[1] "Subject"                                          
-[2] "ActivityName"                                     
-[3] "MeanOfFrequencyMeanBodyAccelerometerJerkMagnitude"
-[4] "MeanOfFrequencyMeanBodyAccelerometerJerkX"        
-[5] "MeanOfFrequencyMeanBodyAccelerometerJerkY"        
-[6] "MeanOfFrequencyMeanBodyAccelerometerJerkZ" 
-```
 
 ## Appendix
 ##### Full list of feature names
