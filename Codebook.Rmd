@@ -1,0 +1,198 @@
+Subject	1
+	1-30 indicating the individual who recorded the data
+ActivityName	String (character vector)
+	walking
+	walking upstairs
+	walking downstairs
+	sitting
+	standing
+	laying
+Mean.TimeBodyAccelerationMean.X	Double
+	bounded within [-1.0,1.0]
+	Time Body Acceleration Mean, X value
+Mean.TimeBodyAccelerationMean.Y	Double
+	bounded within [-1.0,1.0]
+	Time Body Acceleration Mean, Y value
+Mean.TimeBodyAccelerationMean.Z	Double
+	bounded within [-1.0,1.0]
+	Time Body Acceleration Mean, Z value
+Mean.TimeBodyAccelerationStandardDeviation.X	Double
+	bounded within [-1.0,1.0]
+	Time Body Acceleration Standard Deviation, X value
+Mean.TimeBodyAccelerationStandardDeviation.Y	Double
+	bounded within [-1.0,1.0]
+	Time Body Acceleration Standard Deviation, Y value
+Mean.TimeBodyAccelerationStandardDeviation.Z	Double
+	bounded within [-1.0,1.0]
+	Time Body Acceleration Standard Deviation, Z value
+Mean.TimeGravityAccelerationMean.X	Double
+	bounded within [-1.0,1.0]
+	Time Gravity Acceleration Mean, X value
+Mean.TimeGravityAccelerationMean.Y	Double
+	bounded within [-1.0,1.0]
+	Time Gravity Acceleration Mean, Y value
+Mean.TimeGravityAccelerationMean.Z	Double
+	bounded within [-1.0,1.0]
+	Time Gravity Acceleration Mean, Z value
+Mean.TimeGravityAccelerationStandardDeviation.X	Double
+	bounded within [-1.0,1.0]
+	Time Gravity Acceleration Standard Deviation, X value
+Mean.TimeGravityAccelerationStandardDeviation.Y	Double
+	bounded within [-1.0,1.0]
+	Time Gravity Acceleration Standard Deviation, Y value
+Mean.TimeGravityAccelerationStandardDeviation.Z	Double
+	bounded within [-1.0,1.0]
+	Time Gravity Acceleration Standard Deviation, Z value
+Mean.TimeBodyAccelerationJerkMean.X	Double
+	bounded within [-1.0,1.0]
+	Time Body Acceleration Jerk Mean, X value
+Mean.TimeBodyAccelerationJerkMean.Y	Double
+	bounded within [-1.0,1.0]
+	Time Body Acceleration Jerk Mean, Y value
+Mean.TimeBodyAccelerationJerkMean.Z	Double
+	bounded within [-1.0,1.0]
+	Time Body Acceleration Jerk Mean, Z value
+Mean.TimeBodyAccelerationJerkStandardDeviation.X	Double
+	bounded within [-1.0,1.0]
+	Time Body Acceleration Jerk Standard Deviation, X value
+Mean.TimeBodyAccelerationJerkStandardDeviation.Y	Double
+	bounded within [-1.0,1.0]
+	Time Body Acceleration Jerk Standard Deviation, Y value
+Mean.TimeBodyAccelerationJerkStandardDeviation.Z	Double
+	bounded within [-1.0,1.0]
+	Time Body Acceleration Jerk Standard Deviation, Z value
+Mean.TimeBodyGyroMean.X	Double
+	bounded within [-1.0,1.0]
+	Time Body Gyro Mean, X value
+Mean.TimeBodyGyroMean.Y	Double
+	bounded within [-1.0,1.0]
+	Time Body Gyro Mean, Y value
+Mean.TimeBodyGyroMean.Z	Double
+	bounded within [-1.0,1.0]
+	Time Body Gyro Mean, Z value
+Mean.TimeBodyGyroStandardDeviation.X	Double
+	bounded within [-1.0,1.0]
+	Time Body Gyro Standard Deviation, X Value
+Mean.TimeBodyGyroStandardDeviation.Y	Double
+	bounded within [-1.0,1.0]
+	Time Body Gyro Standard Deviation, Y Value
+Mean.TimeBodyGyroStandardDeviation.Z	Double
+	bounded within [-1.0,1.0]
+	Time Body Gyro Standard Deviation, Z Value
+Mean.TimeBodyGyroJerkMean.X	Double
+	bounded within [-1.0,1.0]
+	Time Body Gyro Jerk Mean, X Value
+Mean.TimeBodyGyroJerkMean.Y	Double
+	bounded within [-1.0,1.0]
+	Time Body Gyro Jerk Mean, X Value
+Mean.TimeBodyGyroJerkMean.Z	Double
+	bounded within [-1.0,1.0]
+Mean.TimeBodyGyroJerkStandardDeviation.X	Double
+	bounded within [-1.0,1.0]
+Mean.TimeBodyGyroJerkStandardDeviation.Y	Double
+	bounded within [-1.0,1.0]
+Mean.TimeBodyGyroJerkStandardDeviation.Z	Double
+	bounded within [-1.0,1.0]
+Mean.TimeBodyAccelerationMagMean	Double
+	bounded within [-1.0,1.0]
+Mean.TimeBodyAccelerationMagStandardDeviation	Double
+	bounded within [-1.0,1.0]
+Mean.TimeGravityAccelerationMagMean	Double
+	bounded within [-1.0,1.0]
+Mean.TimeGravityAccelerationMagStandardDeviation	Double
+	bounded within [-1.0,1.0]
+Mean.TimeBodyAccelerationJerkMagMean	Double
+	bounded within [-1.0,1.0]
+Mean.TimeBodyAccelerationJerkMagStandardDeviation	Double
+	bounded within [-1.0,1.0]
+Mean.TimeBodyGyroMagMean	Double
+	bounded within [-1.0,1.0]
+Mean.TimeBodyGyroMagStandardDeviation	Double
+	bounded within [-1.0,1.0]
+Mean.TimeBodyGyroJerkMagMean	Double
+	bounded within [-1.0,1.0]
+Mean.TimeBodyGyroJerkMagStandardDeviation	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyAccelerationMean.X	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyAccelerationMean.Y	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyAccelerationMean.Z	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyAccelerationStandardDeviation.X	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyAccelerationStandardDeviation.Y	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyAccelerationStandardDeviation.Z	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyAccelerationMeanFreq.X	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyAccelerationMeanFreq.Y	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyAccelerationMeanFreq.Z	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyAccelerationJerkMean.X	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyAccelerationJerkMean.Y	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyAccelerationJerkMean.Z	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyAccelerationJerkStandardDeviation.X	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyAccelerationJerkStandardDeviation.Y	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyAccelerationJerkStandardDeviation.Z	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyAccelerationJerkMeanFreq.X	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyAccelerationJerkMeanFreq.Y	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyAccelerationJerkMeanFreq.Z	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyGyroMean.X	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyGyroMean.Y	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyGyroMean.Z	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyGyroStandardDeviation.X	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyGyroStandardDeviation.Y	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyGyroStandardDeviation.Z	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyGyroMeanFreq.X	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyGyroMeanFreq.Y	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyGyroMeanFreq.Z	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyAccelerationMagMean	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyAccelerationMagStandardDeviation	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyAccelerationMagMeanFreq	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyAccelerationJerkMagMean	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyAccelerationJerkMagStandardDeviation	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyAccelerationJerkMagMeanFreq	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyGyroMagMean	Double
+	bounded within [-1.0,1.0]
+Mean.FrequencyBodyGyroMagStandardDeviation	Double
+	bounded within [-1.0,1.0]
+	mean of all body body gyro jerk standard deviation
+Mean.FrequencyBodyGyroMagMeanFreq	Double
+	bounded within [-1.0,1.0]
+	mean of all frequency body gyro jerk mag frequency readings
+Mean.FrequencyBodyGyroJerkMagMean	Double
+	bounded within [-1.0,1.0]
+	mean of all frequency body gyro jerk mag mean samples
+Mean.FrequencyBodyGyroJerkMagStandardDeviation	Double
+	bounded within [-1.0,1.0]
+	Mean of all frequency body gyro jerk mag standard deviation samples
+Mean.FrequencyBodyGyroJerkMagMeanFreq	Double
+	bounded within [-1.0,1.0]
+        Mean of all Frequency Body Gyro Jerk Mag Mean Freq samples

@@ -51,32 +51,24 @@ getMeanAndStandardDevData <- function(dataDir = "UCI HAR Dataset", isTest=TRUE) 
         Data.X
 }
 
-# For each type of either `time` or `frequency` open the features.txt file
-# and find all feature names that match the type that also only match mean or
-# standard deviation features
-getCleanedFeatureNames <- function(uciHarDataset = "UCI HAR Dataset") {
-        
-        filename <- paste(uciHarDataset, "/", "features.txt", sep="")
-        if (!file.exists(filename)) {
-                stop(paste("Cannot find features.txt (", filename, ")", sep=""))
-        }
-        features <- read.table(filename)
-        
-        ## Find only the features with `mean` or `std` which represent Mean and standard deviation respectively
-        selected_indices <- grep("(mean|std)", features[[2]])
+cleanFeatures <- function(features, selected_indices) {
         selected <- features[selected_indices,]
         
-        # Replace `t` with Time
-        selected[[2]] <- gsub("^t", "Time", selected[[2]])
+        ## Filter out meanFreq because it's redundant with step 5 of this assignment
+        meanFreq <- grep("meanFreq", selected[[2]], invert = T)
+        selected <- selected[meanFreq,]
         
-        # Replace `f` with Frequency
-        selected[[2]] <- gsub("^f", "Frequency", selected[[2]])       
+        # Remove "Freq" from the end because it's redundant of the `f`
+        selected[[2]] <- gsub("Freq\\(\\)", "Frequency", selected[[2]])
         
-        # Acceleration should not be abbreviated
-        selected[[2]] <- gsub("Acc", "Acceleration", selected[[2]])
+        # Accelerometer is better than Acc
+        selected[[2]] <- gsub("Acc", "Accelerometer", selected[[2]])
         
-        # Standard Deviation should not be abbreviated
-        selected[[2]] <- gsub("std", "StandardDeviation", selected[[2]])
+        # Accelerometer is better than Acc
+        selected[[2]] <- gsub("Gyro", "Gyroscope", selected[[2]])
+        
+        # Magnitude is better than Mag
+        selected[[2]] <- gsub("Mag", "Magnitude", selected[[2]])
         
         # No need for `()` in the column names
         selected[[2]] <- gsub("\\(\\)", "", selected[[2]])
@@ -84,19 +76,62 @@ getCleanedFeatureNames <- function(uciHarDataset = "UCI HAR Dataset") {
         # No need for hyphens
         selected[[2]] <- gsub("-", "", selected[[2]])
         
-        # Capitalize Mean
-        selected[[2]] <- gsub("mean", "Mean", selected[[2]])
-        
-        # Replace BodyBody with Body
+        # Replace BodyBody with Body as it's likely a typo
         # https://www.coursera.org/learn/data-cleaning/peer/FIZtT/getting-and-cleaning-data-course-project/discussions/threads/yD2gtalxEeelRgqEwi0dZA
         selected[[2]] <- gsub("BodyBody", "Body", selected[[2]])
         
-        # Put a hyphen before the last X,Y or Z
-        selected[[2]] <- gsub("X$", ".X", selected[[2]])
-        selected[[2]] <- gsub("Y$", ".Y", selected[[2]])
-        selected[[2]] <- gsub("Z$", ".Z", selected[[2]])
+        # Put a . before the last X,Y or Z for readability
+        # selected[[2]] <- gsub("X$", ".X", selected[[2]])
+        # selected[[2]] <- gsub("Y$", ".Y", selected[[2]])
+        # selected[[2]] <- gsub("Z$", ".Z", selected[[2]])
         
+        ## For frequency columns, spell out Frequency and Standard Deviation or Mean and move to the front
+        ## because it's the most important part
+        count = 1
+        for (column in selected[[2]]) {
+                if (length(grep("mean", column)) > 0) {
+                        if (length(grep("^f", column)) > 0) {
+                                column <- gsub("^f", "", column)
+                                selected[[count,2]] <- paste("FrequencyMean", gsub("mean", "", column), sep = "")                
+                        }else { # Time
+                                column <- gsub("^t", "", column)
+                                selected[[count,2]] <- paste("TimeMean", gsub("mean", "", column), sep = "")
+                        }
+
+                }
+                # Capitalize Standard Deviation without abbreviating and move to the front
+                if (length(grep("std", column)) > 0) {
+                        if (length(grep("^f", column)) > 0) {
+                                column <- gsub("^f", "", column)
+                                selected[[count,2]] <- paste("FrequencyStandardDeviation", gsub("std", "", column), sep = "")
+                        }else{
+                                column <- gsub("^t", "", column)
+                                selected[[count,2]] <- paste("TimeStandardDeviation", gsub("std", "", column), sep = "")
+                        }
+                }
+                count = count + 1
+        }
         selected
+}
+
+# For each type of either `time` or `frequency` open the features.txt file
+# and find all feature names that match the type that also only match mean or
+# standard deviation features
+getCleanedFeatureNames <- function(uciHarDataset = "UCI HAR Dataset") {
+        library(dplyr)
+        filename <- paste(uciHarDataset, "/", "features.txt", sep="")
+        if (!file.exists(filename)) {
+                stop(paste("Cannot find features.txt (", filename, ")", sep=""))
+        }
+        features <- read.table(filename)
+        
+        ## Find only the features with `mean` or `std` which represent Mean and standard deviation respectively
+        # We want them sorted so we'll have the Mean columns first and then the Standard Deviation
+        meanColumns <- cleanFeatures(features, grep("mean", features[[2]]))
+        stdDevColumns <- cleanFeatures(features, grep("std", features[[2]]))
+        columns <- arrange(rbind(meanColumns, stdDevColumns), V2)
+        names(columns) <- c("ID", "FEATURE NAME")
+        columns
 }
 
 # Read the activity labels and their corresponding value from activity_labels file
@@ -116,22 +151,25 @@ averageDataSetsByActivityAndSubject <- function(dataFrame) {
         newDataFrame <- data.frame(Subject = numeric(0), ActivityName = character(0))
         subjects <- unique(dataFrame["Subject"])
         subjects <- sort(subjects$Subject)
-        activities <- unique(dataFrame["ActivityName"])
+        activities <- unique(dataFrame["ActivityName"])[[1]]
         features <- getCleanedFeatureNames()[[2]]
         
         for(id in subjects) {
                 for(name in activities) {
-                        filtered <- dataFrame[dataFrame["Subject"] == id & dataFrame["ActivityName"] == name,]
+                        filtered <- filter(dataFrame, Subject == id & ActivityName == name)# dataFrame[dataFrame["Subject"] == id & dataFrame["ActivityName"] == name,]
                         new <- data.frame(Subject = id, ActivityName = name)
                         for (feature in features) {
                                 count <- length(filtered[,feature])
-                                newColumn <- paste("Mean.", feature, sep = "")
-                                if (count > 0) {
-                                        new[newColumn] = mean(filtered[,feature])
+                                newColumn <- paste("MeanOf", feature, sep = "")
+                                selected <- select(filtered, feature)
+                                if (nrow(selected) > 0) {
+                                        new[newColumn] <- mean(filtered[,feature])
                                 }else{
-                                        new[newColumn] = 0.0
+                                        new[newColumn] <- NA
                                 }
+                                # print(new[newColumn])
                         }
+                        # stop()
                         newDataFrame <- rbind(newDataFrame, new)
                 }
         }
@@ -157,9 +195,7 @@ downloadDataAndUnzip()
 # Step 2. Merge data for `test` and `train`
 dataFrame <- mergeDataSets()
 
-# Optional Step 3. Write merged dataset to file
-# exportDataSets(dataFrame)
-
-# Step 4 (Step 5 from instructions)
+# Step 3 (Step 5 from instructions)
 averaged <- averageDataSetsByActivityAndSubject(dataFrame)
 exportMeanDataBySubjectAndActivity(averaged)
+
