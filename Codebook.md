@@ -1,14 +1,14 @@
 
 Subject: numeric
-        1-30
+- 1-30
         
 ActivityName: character string
-        walking
-        walking upstairs
-        walking downstairs
-        sitting
-        standing
-        laying
+- walking
+- walking upstairs
+- walking downstairs
+- sitting
+- standing
+- laying
 
 MeanOfFrequencyMeanBodyAccelerometerJerkMagnitude:	Numeric Double
 	Mean of FrequencyMeanBodyAccelerometerJerkMagnitude
