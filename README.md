@@ -40,13 +40,13 @@ Dataset attribution:
 - Davide Anguita, Alessandro Ghio, Luca Oneto, Xavier Parra and Jorge L. Reyes-Ortiz. A Public Domain Dataset for Human Activity Recognition Using Smartphones. 21th European Symposium on Artificial Neural Networks, Computational Intelligence and Machine Learning, ESANN 2013. Bruges, Belgium 24-26 April 2013.
 
 
-## Step 0. Download and unzip data
+## Step 0. Locate or Download and unzip data
 
 The first thing the script does is look for the existence of data.zip. If it's not found, it will be downloaded from
 `https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip` and unzipped in the current 
 working directory.
 
-The internal function that does this is called `downloadDataAndUnzip()` which requires no arguments.
+The internal function that does this is called `locateOrRetrieveDataIfNecessary()` which requires no arguments.
 
 ## Steps 1-4
 Steps 1-4 are broken down into various steps outlined here:

@@ -7,13 +7,15 @@
 # 5. From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
 
 ## Downloads the data file and unzips if it doesn't exist already
-downloadDataAndUnzip <- function() {
+locateOrRetrieveDataIfNecessary <- function() {
         zipfilePath <- paste("data.zip", sep = "")
         url <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
-        if (!file.exists(zipfilePath)) {
-                download.file(url, zipfilePath)
+        if (!file.exists("./UCI HAR Dataset")) {
+                if (!file.exists(zipfilePath)) {
+                        download.file(url, zipfilePath)
+                }
+                unzip(zipfilePath, overwrite = TRUE)       
         }
-        unzip(zipfilePath, overwrite = TRUE)
 }
 
 ## passed dataDir, type of reading (time or frequency) it returns only the mean and standard deviation columns
@@ -199,52 +201,18 @@ exportMeanDataBySubjectAndActivity <- function(dataFrame, filename = "UCI-HAR-ti
 }
 
 # Step 0. Downloads dataset and unzip to current working directory
-downloadDataAndUnzip()
+locateOrRetrieveDataIfNecessary()
 
 # Steps 1-4
 # 1. Merges the training and the test sets to create one data set.
 # 2. Extracts only the measurements on the mean and standard deviation for each measurement.
 # 3. Uses descriptive activity names to name the activities in the data set
 # 4. Appropriately labels the data set with descriptive variable names.
-# dataFrame <- cleanAndMergeDataSets()
-# 
-# # 5. From the data set in step 4, creates a second, independent tidy data set with the average of each variable for
-# # each activity and each subject.
-# averaged <- averageDataSetsByActivityAndSubject(dataFrame)
-# 
-# # Export the averaged data
-# exportMeanDataBySubjectAndActivity(averaged)
-
-codebook <- function() {
-        new <- data.frame("name" = character())
-        n <- names(averaged[3:68])
-        for (name in n) {
-                isX <- length(grep("X$", name)) > 0
-                isY <- length(grep("Y$", name)) > 0
-                isZ <- length(grep("Z$", name)) > 0
-                cleaned <- gsub("^", "\n", name)
-                
-                stripped <- gsub("MeanOf", "", name)
-                cleaned <- gsub("$", ":\tNumeric Double\n\tMean of ", cleaned)
-                cleaned <- gsub("$", stripped, cleaned)
-
-                if (isX) {
-                        cleaned <- gsub("X$", "", cleaned)
-                        cleaned <- gsub("$", " along the X axis", cleaned)
-                }
-                else if (isY) {
-                        cleaned <- gsub("Y$", "", cleaned)
-                        cleaned <- gsub("$", " along the Y axis", cleaned)
-                }
-                else if (isZ) {
-                        cleaned <- gsub("Z$", "", cleaned)
-                        cleaned <- gsub("$", " along the Z axis", cleaned)
-                }
-
-                cleaned <- gsub("$", "\n\tValues bounded within [-1,1]", cleaned)
-                row <- data.frame("name" = cleaned)
-                new <- rbind(new, row)
-        }
-        write.table(new, "cleaned.txt", row.names = F)
-}
-codebook()
+dataFrame <- cleanAndMergeDataSets()
+ 
+# 5. From the data set in step 4, creates a second, independent tidy data set with the average of each variable for
+# each activity and each subject.
+averaged <- averageDataSetsByActivityAndSubject(dataFrame)
+ 
+# Export the averaged data
+exportMeanDataBySubjectAndActivity(averaged)
