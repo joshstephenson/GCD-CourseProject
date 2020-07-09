@@ -1,4 +1,5 @@
 # This script does the following:
+# 0. Downloads dataset and unzip to current working directory
 # 1. Merges the training and the test sets to create one data set.
 # 2. Extracts only the measurements on the mean and standard deviation for each measurement.
 # 3. Uses descriptive activity names to name the activities in the data set
@@ -28,27 +29,39 @@ getMeanAndStandardDevData <- function(dataDir = "UCI HAR Dataset", isTest=TRUE) 
         
         Path.X <- paste(dataDir, "/", subfolder, "/", x_filename, sep = "")
         Data.X <- read.table(Path.X, header = F)
+        
+        # This is where we select only the columns that matched our selected features (eg mean and stddev)
         Data.X <- Data.X[features[[1]]]
+        
+        # Make sure we rename the columns to the cleaned names
         names(Data.X) <- features[[2]]
         
         # Add the subject to the data table as a new column `Subject`
         Path.subject <- paste(dataDir, "/", subfolder, "/", subject_filename, sep = "")
         Data.subject <- read.table(Path.subject, header = F)
-        Data.X["Subject"] = Data.subject[[1]]
-        Data.X
-
-        ## Add the activity type from the y_test or y_train file as a new column `ActivityType`
+        names(Data.subject) <- c("Subject")
+        
+        ## Add the activity type from the y_test or y_train file as a new column `ActivityID` & `ActivityName`
         # Making sure to replace the numeric value with the string value from the `activity_labels.txt` file
         activities <- getActivityNames()
-        Path.Y <- paste(dataDir, "/", subfolder, "/", y_filename, sep = "")
-        Data.Y <- read.table(Path.Y, header = F)
-        names(Data.Y) <- c("ID")
         
-        Data.merged <- merge(Data.Y, activities, by="ID",all=TRUE)
-        Data.merged
-        Data.X["ActivityName"] = Data.merged["Name"]
-        # Data.X["ActivityID"] = Data.merged["ID"]
-        Data.X
+        Path.Y <- paste(dataDir, "/", subfolder, "/", y_filename, sep = "")
+        Data.activity <- read.table(Path.Y, header = F)
+        names(Data.activity) <- c("ActivityID")
+        Sorted.activity <- data.frame("ActivityID" = numeric(), "ActivityName" = character())
+        for(act in Data.activity[,1]) {
+                row <- data.frame("ActivityID" = act, "ActivityName" = activities[act, 2])
+                Sorted.activity <- rbind(Sorted.activity, row)
+        }
+
+        # Combine Subject and ActivityName
+        Data.combined <- cbind(Data.subject, Sorted.activity)
+        
+        # Now add the columns for the sample readings from X file
+        Data.combined <- cbind(Data.combined, Data.X)
+        
+        # Return the combined data frame
+        Data.combined
 }
 
 cleanFeatures <- function(features, selected_indices) {
@@ -143,12 +156,13 @@ getActivityNames <- function(uciHarDataset = "UCI HAR Dataset") {
         activities <- read.table(filename)
         activities[[2]] <- tolower(activities[[2]])
         activities[[2]] <- gsub("_", " ", activities[[2]])
-        names(activities) <- c("ID", "Name")
+        names(activities) <- c("ActivityID", "ActivityName")
         activities
 }
 
 averageDataSetsByActivityAndSubject <- function(dataFrame) {
-        newDataFrame <- data.frame(Subject = numeric(0), ActivityName = character(0))
+        library(dplyr)
+        newDataFrame <- data.frame(Subject = numeric(), ActivityName = character())
         subjects <- unique(dataFrame["Subject"])
         subjects <- sort(subjects$Subject)
         activities <- unique(dataFrame["ActivityName"])[[1]]
@@ -156,20 +170,14 @@ averageDataSetsByActivityAndSubject <- function(dataFrame) {
         
         for(id in subjects) {
                 for(name in activities) {
-                        filtered <- filter(dataFrame, Subject == id & ActivityName == name)# dataFrame[dataFrame["Subject"] == id & dataFrame["ActivityName"] == name,]
+                        filtered <- filter(dataFrame, Subject == id & ActivityName == name)
                         new <- data.frame(Subject = id, ActivityName = name)
                         for (feature in features) {
                                 count <- length(filtered[,feature])
                                 newColumn <- paste("MeanOf", feature, sep = "")
                                 selected <- select(filtered, feature)
-                                if (nrow(selected) > 0) {
-                                        new[newColumn] <- mean(filtered[,feature])
-                                }else{
-                                        new[newColumn] <- NA
-                                }
-                                # print(new[newColumn])
+                                new[newColumn] <- mean(filtered[,feature])
                         }
-                        # stop()
                         newDataFrame <- rbind(newDataFrame, new)
                 }
         }
@@ -178,10 +186,11 @@ averageDataSetsByActivityAndSubject <- function(dataFrame) {
 
 # Loads the appropriate data (mean & std with appending activity type and subject value) for each of test and 
 # train is loaded and then combined using `rbind`
-mergeDataSets <- function() {
+cleanAndMergeDataSets <- function() {
+        library(dplyr)
         Data.test <- getMeanAndStandardDevData(isTest = TRUE)
         Data.train <- getMeanAndStandardDevData(isTest = FALSE)
-        rbind(Data.test, Data.train)
+        arrange(rbind(Data.test, Data.train), Subject, ActivityID)
 }
 
 # writes provided data frame to file with `write.table`
@@ -189,13 +198,53 @@ exportMeanDataBySubjectAndActivity <- function(dataFrame, filename = "UCI-HAR-ti
         write.table(dataFrame, file = filename, row.names = FALSE)        
 }
 
-# Step 1. Download the data and unzip
+# Step 0. Downloads dataset and unzip to current working directory
 downloadDataAndUnzip()
 
-# Step 2. Merge data for `test` and `train`
-dataFrame <- mergeDataSets()
+# Steps 1-4
+# 1. Merges the training and the test sets to create one data set.
+# 2. Extracts only the measurements on the mean and standard deviation for each measurement.
+# 3. Uses descriptive activity names to name the activities in the data set
+# 4. Appropriately labels the data set with descriptive variable names.
+# dataFrame <- cleanAndMergeDataSets()
+# 
+# # 5. From the data set in step 4, creates a second, independent tidy data set with the average of each variable for
+# # each activity and each subject.
+# averaged <- averageDataSetsByActivityAndSubject(dataFrame)
+# 
+# # Export the averaged data
+# exportMeanDataBySubjectAndActivity(averaged)
 
-# Step 3 (Step 5 from instructions)
-averaged <- averageDataSetsByActivityAndSubject(dataFrame)
-exportMeanDataBySubjectAndActivity(averaged)
+codebook <- function() {
+        new <- data.frame("name" = character())
+        n <- names(averaged[3:68])
+        for (name in n) {
+                isX <- length(grep("X$", name)) > 0
+                isY <- length(grep("Y$", name)) > 0
+                isZ <- length(grep("Z$", name)) > 0
+                cleaned <- gsub("^", "\n", name)
+                
+                stripped <- gsub("MeanOf", "", name)
+                cleaned <- gsub("$", ":\tNumeric Double\n\tMean of ", cleaned)
+                cleaned <- gsub("$", stripped, cleaned)
 
+                if (isX) {
+                        cleaned <- gsub("X$", "", cleaned)
+                        cleaned <- gsub("$", " along the X axis", cleaned)
+                }
+                else if (isY) {
+                        cleaned <- gsub("Y$", "", cleaned)
+                        cleaned <- gsub("$", " along the Y axis", cleaned)
+                }
+                else if (isZ) {
+                        cleaned <- gsub("Z$", "", cleaned)
+                        cleaned <- gsub("$", " along the Z axis", cleaned)
+                }
+
+                cleaned <- gsub("$", "\n\tValues bounded within [-1,1]", cleaned)
+                row <- data.frame("name" = cleaned)
+                new <- rbind(new, row)
+        }
+        write.table(new, "cleaned.txt", row.names = F)
+}
+codebook()

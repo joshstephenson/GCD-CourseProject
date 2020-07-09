@@ -35,3 +35,6 @@ UCI HAR Combined.txt
 .RData
 README.html
 README.rmd
+codebook.R
+Codebook.Rmd
+Codebook.html
