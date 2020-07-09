@@ -31,7 +31,7 @@ If you would like to read this data file back into R, the following snippet will
 [6] "MeanOfFrequencyMeanBodyAccelerometerJerkZ" 
 ```
 
-## More general overview
+### More general overview
 The script `run_analysis.R` retrieves accelerometer and gyroscope values measured across a range of 30 subjects in 6 different activities. The data is stored on the web in a zip file and is organized into sub-folders for test and train data. This data is retrieved, unzipped and then cleaned and process. This document outlines the specifics of that process.
 
 Data is made available by the Machine Learning Repository of the University of California, Irvine. Read more: [Human Activity Recognition Using Smartphones Data Set](http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones)
@@ -40,7 +40,7 @@ Dataset attribution:
 - Davide Anguita, Alessandro Ghio, Luca Oneto, Xavier Parra and Jorge L. Reyes-Ortiz. A Public Domain Dataset for Human Activity Recognition Using Smartphones. 21th European Symposium on Artificial Neural Networks, Computational Intelligence and Machine Learning, ESANN 2013. Bruges, Belgium 24-26 April 2013.
 
 
-### Step 0. Download and unzip data
+## Step 0. Download and unzip data
 
 The first thing the script does is look for the existence of data.zip. If it's not found, it will be downloaded from
 `https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip` and unzipped in the current 
