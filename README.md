@@ -42,9 +42,10 @@ Dataset attribution:
 
 ## Step 0. Locate or Download and unzip data
 
-The first thing the script does is look for the existence of data.zip. If it's not found, it will be downloaded from
+The first thing the script does is look for a folder named "UCI HAR Dataset" in the current working directory. If that is not found,
+it looks for a file called data.zip. If that is still not found, it will be downloaded from
 `https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip` and unzipped in the current 
-working directory.
+working directory to the folder "UCI HAR Dataset"
 
 The internal function that does this is called `locateOrRetrieveDataIfNecessary()` which requires no arguments.
 
